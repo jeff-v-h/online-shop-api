@@ -1,8 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OnlineShopApi.common.Helpers;
-using OnlineShopApi.data.Models;
-using OnlineShopApi.data.Repositories;
-using OnlineShopApi.data.XAL;
 
 namespace OnlineShopApi.domain.Frameworks
 {
@@ -10,13 +6,7 @@ namespace OnlineShopApi.domain.Frameworks
     {
         public static void InjectServices(IServiceCollection services)
         {
-            services.AddScoped<ISocialRepository, SocialRepository>();
-            services.AddScoped<IDocumentRepository<SocialList>, MongoBaseRepository<SocialList>>();
-            services.AddScoped<IUserRepository, UserRepository>();
-
-            services.AddScoped<ISocialXmlAccessLayer, SocialXmlAccessLayer>();
-
-            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddHttpClient<IWooliesService, WooliesService>();
         }
     }
 }

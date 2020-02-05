@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using OnlineShopApi.domain.Frameworks;
 using OnlineShopApi.domain.Managers;
+using OnlineShopApi.domain.Models.ModelMappers;
 using OnlineShopApi.presentation.Middlewares;
 
 namespace OnlineShopApi.presentation
@@ -40,9 +41,7 @@ namespace OnlineShopApi.presentation
             // Auto Mapper configurations (to map models to view models)
             var config = new MapperConfiguration(cfg =>
             {
-                //cfg.AddProfile<SocialProfile>();
-                //cfg.AddProfile<UserProfile>();
-                //cfg.CreateMap<NewUser, UserVM>();
+                cfg.AddProfile<ShopProfile>();
             });
             IMapper mapper = config.CreateMapper();
             services.AddSingleton(mapper);
@@ -54,7 +53,7 @@ namespace OnlineShopApi.presentation
 
             // Add services in data layer via ServiceManager and the domain layer
             ServiceManager.InjectServices(services);
-            services.AddTransient<ISocialManager, SocialManager>();
+            services.AddTransient<IShopManager, ShopManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

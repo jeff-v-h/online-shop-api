@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ViewModels;
-using OnlineShopApi.presentation.RequestModels;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace OnlineShopApi.presentation.Controllers
 {
@@ -22,10 +19,11 @@ namespace OnlineShopApi.presentation.Controllers
 
         [HttpGet]
         [HttpGet("user")]
-        [ProducesResponseType(typeof(ShopListVM), StatusCodes.Status200OK)]
-        public ActionResult<ShopListVM> GetShopList([FromBody] string token)
+        [ProducesResponseType(typeof(UserVM), StatusCodes.Status200OK)]
+        public ActionResult<ProductVM> GetUser([FromBody] int? id)
         {
-            var doc = _manager.Get();
+            var customerId = (id.HasValue) ? id.Value : 1;
+            var doc = _manager.GetUser(customerId);
             return Ok(doc);
         }
 
