@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PLP.Social.DataService.data.Models;
+using OnlineShopApi.data.Models;
 using OnlineShopApi.domain.Models.ViewModels;
 
 namespace OnlineShopApi.domain.Models.ModelMappers

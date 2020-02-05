@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using PLP.Social.DataService.common.Helpers;
-using PLP.Social.DataService.data.Models;
-using PLP.Social.DataService.data.Repositories;
-using PLP.Social.DataService.data.XAL;
+using OnlineShopApi.common.Helpers;
+using OnlineShopApi.data.Models;
+using OnlineShopApi.data.Repositories;
+using OnlineShopApi.data.XAL;
 
 namespace OnlineShopApi.domain.Frameworks
 {

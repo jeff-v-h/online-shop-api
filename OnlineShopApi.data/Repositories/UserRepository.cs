@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
-using PLP.Social.DataService.common.Models;
+
 using OnlineShopApi.data.Models.User;
 using System;
 using System.Collections.Generic;

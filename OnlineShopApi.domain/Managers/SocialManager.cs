@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
-using PLP.Social.DataService.data.Models;
-using PLP.Social.DataService.data.Repositories;
-using PLP.Social.DataService.data.XAL;
+using OnlineShopApi.data.Models;
+using OnlineShopApi.data.Repositories;
+using OnlineShopApi.data.XAL;
 using OnlineShopApi.domain.Models.ViewModels;
 using System;
 using System.Collections.Generic;
