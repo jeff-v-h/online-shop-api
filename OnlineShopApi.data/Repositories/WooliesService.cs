@@ -32,7 +32,7 @@ namespace OnlineShopApi.data.Repositories
         {
             return new User
             {
-                Url = $"https://online-shop-api.azurewebsites.net/api/shop",
+                Name = "Woolies Customer",
                 Token = _token
             };
         }
