@@ -102,7 +102,7 @@ namespace OnlineShopApi.domain.Managers
             return shoppedProducts;
         }
 
-        public async Task<double> CalculateTrolleyTotal(TrolleyVM trolleyVM)
+        public async Task<decimal> CalculateTrolleyTotal(TrolleyVM trolleyVM)
         {
             var trolley = _mapper.Map<Trolley>(trolleyVM);
             return await _service.CalculateTrolleyTotal(trolley);

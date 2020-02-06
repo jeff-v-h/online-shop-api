@@ -65,7 +65,7 @@ namespace OnlineShopApi.data.Repositories
             else throw new Exception(response.ReasonPhrase);
         }
 
-        public async Task<double> CalculateTrolleyTotal(Trolley trolley)
+        public async Task<decimal> CalculateTrolleyTotal(Trolley trolley)
         {
             var json = JsonConvert.SerializeObject(trolley);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -76,7 +76,7 @@ namespace OnlineShopApi.data.Repositories
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                return double.Parse(jsonString);
+                return decimal.Parse(jsonString);
             }
             else throw new Exception(response.ReasonPhrase);
         }
