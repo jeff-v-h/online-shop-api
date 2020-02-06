@@ -38,12 +38,12 @@ namespace OnlineShopApi.presentation.Controllers
             return Ok(doc);
         }
 
-        //[HttpPost("trolleyTotal")]
-        //[ProducesResponseType(typeof(TrolleyTotalVM), StatusCodes.Status201Created)]
-        //public async Task<ActionResult<TrolleyTotalVM>> CreateShopListDetails(Trolley doc)
-        //{
-        //    await _manager.CreateListsDetails(doc);
-        //    return CreatedAtAction(nameof(GetShopList), new { id = doc.Id }, doc);
-        //}
+        [HttpPost("trolleyTotal")]
+        [ProducesResponseType(typeof(TrolleyVM), StatusCodes.Status201Created)]
+        public async Task<IActionResult> CalculateTrolley(TrolleyVM trolley)
+        {
+            var total = await _manager.CalculateTrolleyTotal(trolley);
+            return Ok(total);
+        }
     }
 }

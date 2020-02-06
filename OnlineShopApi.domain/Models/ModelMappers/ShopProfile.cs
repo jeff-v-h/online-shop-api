@@ -9,10 +9,21 @@ namespace OnlineShopApi.domain.Models.ModelMappers
         public ShopProfile()
         {
             CreateMap<User, UserVM>();
-            CreateMap<UserVM, User>();
 
             CreateMap<Product, ProductVM>();
-            CreateMap<ProductVM, Product>();
+
+            CreateMap<ProductBase, ProductBaseVM>();
+            CreateMap<ProductBaseVM, ProductBase>();
+
+            CreateMap<ProductQuantity, ProductQuantityVM>();
+            CreateMap<ProductQuantityVM, ProductQuantity>();
+
+            CreateMap<ShopperHistory, ShopperHistoryVM>();
+
+            CreateMap<Special, SpecialVM>();
+            CreateMap<SpecialVM, Special>();
+
+            CreateMap<TrolleyVM, Trolley>();
         }
     }
 }

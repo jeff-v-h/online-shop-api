@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace OnlineShopApi.data.Repositories
@@ -41,10 +42,6 @@ namespace OnlineShopApi.data.Repositories
             var path = $"/api/resource/shopperHistory?token={_token}";
             var response = await _client.GetAsync(path);
 
-            //var jsonString = "[{ \"customerId\":123,\"products\":[{\"name\":\"Test Product A\",\"price\":99.99,\"quantity\":3.0},{\"name\":\"Test Product B\",\"price\":101.99,\"quantity\":1.0},{\"name\":\"Test Product F\",\"price\":999999999999.0,\"quantity\":1.0}]},{\"customerId\":23,\"products\":[{\"name\":\"Test Product A\",\"price\":99.99,\"quantity\":2.0},{\"name\":\"Test Product B\",\"price\":101.99,\"quantity\":3.0},{\"name\":\"Test Product F\",\"price\":999999999999.0,\"quantity\":1.0}]},{\"customerId\":23,\"products\":[{\"name\":\"Test Product C\",\"price\":10.99,\"quantity\":2.0},{\"name\":\"Test Product F\",\"price\":999999999999.0,\"quantity\":2.0}]},{\"customerId\":23,\"products\":[{\"name\":\"Test Product A\",\"price\":99.99,\"quantity\":1.0},{\"name\":\"Test Product B\",\"price\":101.99,\"quantity\":1.0},{\"name\":\"Test Product C\",\"price\":10.99,\"quantity\":1.0}]}];";
-            //var result = JsonConvert.DeserializeObject<IEnumerable<ShopperHistory>>(jsonString);
-            //return result.ToList();
-
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -64,6 +61,22 @@ namespace OnlineShopApi.data.Repositories
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<IEnumerable<Product>>(jsonString);
                 return result.ToList();
+            }
+            else throw new Exception(response.ReasonPhrase);
+        }
+
+        public async Task<double> CalculateTrolleyTotal(Trolley trolley)
+        {
+            var json = JsonConvert.SerializeObject(trolley);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var path = $"/api/resource/trolleyCalculator?token={_token}";
+            var response = await _client.PostAsync(path, data);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                return double.Parse(jsonString);
             }
             else throw new Exception(response.ReasonPhrase);
         }

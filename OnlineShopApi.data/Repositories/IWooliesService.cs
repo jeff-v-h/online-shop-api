@@ -9,5 +9,6 @@ namespace OnlineShopApi.data.Repositories
         User GetUser(int id);
         Task<List<ShopperHistory>> GetShopperHistoryAsync();
         Task<List<Product>> GetProductsAsync();
+        Task<double> CalculateTrolleyTotal(Trolley trolley);
     }
 }
