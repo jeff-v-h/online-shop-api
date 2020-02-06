@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OnlineShopApi.common;
 using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ViewModels;
+using OnlineShopApi.presentation.RequestModels;
+using System.Collections.Generic;
 
 namespace OnlineShopApi.presentation.Controllers
 {
@@ -20,21 +23,19 @@ namespace OnlineShopApi.presentation.Controllers
         [HttpGet]
         [HttpGet("user")]
         [ProducesResponseType(typeof(UserVM), StatusCodes.Status200OK)]
-        public ActionResult<UserVM> GetUser([FromBody] int? id)
+        public ActionResult<UserVM> GetUser()
         {
-            var customerId = (id.HasValue) ? id.Value : 1;
-            var doc = _manager.GetUser(customerId);
+            var doc = _manager.GetUser(null);
             return Ok(doc);
         }
 
-        //[HttpGet]
-        //[HttpGet("sort")]
-        //[ProducesResponseType(typeof(ShopListVM), StatusCodes.Status200OK)]
-        //public ActionResult<ShopListVM> GetShopList([FromQuery] string sortOptions)
-        //{
-        //    var doc = _manager.Get(sortOptions);
-        //    return Ok(doc);
-        //}
+        [HttpGet("sort")]
+        [ProducesResponseType(typeof(List<ProductVM>), StatusCodes.Status200OK)]
+        public ActionResult<List<ProductVM>> GetSortedProducts([FromQuery] SortOption sortOption)
+        {
+            var doc = _manager.GetProducts(sortOption);
+            return Ok(doc);
+        }
 
         //[HttpPost("trolleyTotal")]
         //[ProducesResponseType(typeof(TrolleyTotalVM), StatusCodes.Status201Created)]

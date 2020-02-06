@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnlineShopApi.common\OnlineShopApi.common.csproj" />
     <ProjectReference Include="..\OnlineShopApi.data\OnlineShopApi.data.csproj" />
   </ItemGroup>
 
