@@ -1,6 +1,6 @@
-﻿namespace OnlineShopApi.domain.Models.ViewModels
+﻿namespace OnlineShopApi.data.Models
 {
-    public class UserVM
+    public class User
     {
         public string Name { get; set; }
         public string Token { get; set; }

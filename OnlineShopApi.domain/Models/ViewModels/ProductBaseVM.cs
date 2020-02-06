@@ -1,8 +1,8 @@
 ﻿namespace OnlineShopApi.domain.Models.ViewModels
 {
-    public class UserVM
+    public class ProductBaseVM
     {
         public string Name { get; set; }
-        public string Token { get; set; }
+        public double Price { get; set; }
     }
 }

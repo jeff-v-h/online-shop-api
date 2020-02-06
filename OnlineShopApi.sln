@@ -3,11 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineShopApi.presentation", "OnlineShopApi.presentation\OnlineShopApi.presentation.csproj", "{EB2E525E-2A36-463F-9871-BE289E276D5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineShopApi.presentation", "OnlineShopApi.presentation\OnlineShopApi.presentation.csproj", "{EB2E525E-2A36-463F-9871-BE289E276D5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineShopApi.domain", "OnlineShopApi.domain\OnlineShopApi.domain.csproj", "{117FEB4A-2384-453C-8E58-DF02548508E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineShopApi.domain", "OnlineShopApi.domain\OnlineShopApi.domain.csproj", "{117FEB4A-2384-453C-8E58-DF02548508E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineShopApi.data", "OnlineShopApi.data\OnlineShopApi.data.csproj", "{1CD2D200-F4F2-4ABE-8FBB-2545F64EAF4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineShopApi.data", "OnlineShopApi.data\OnlineShopApi.data.csproj", "{1CD2D200-F4F2-4ABE-8FBB-2545F64EAF4F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{4D853F24-DA54-4D56-9D98-417DF5EBD133}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{7CC91622-2416-4DBA-9D58-51EF56829A5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{63815119-DB25-4AFD-921F-0677DD3E3B12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineShopApi.common", "OnlineShopApi.common\OnlineShopApi.common.csproj", "{64D72978-750C-4BB8-B065-22C547DBEED5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +35,18 @@ Global
 		{1CD2D200-F4F2-4ABE-8FBB-2545F64EAF4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CD2D200-F4F2-4ABE-8FBB-2545F64EAF4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CD2D200-F4F2-4ABE-8FBB-2545F64EAF4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D72978-750C-4BB8-B065-22C547DBEED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D72978-750C-4BB8-B065-22C547DBEED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D72978-750C-4BB8-B065-22C547DBEED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D72978-750C-4BB8-B065-22C547DBEED5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{117FEB4A-2384-453C-8E58-DF02548508E9} = {7CC91622-2416-4DBA-9D58-51EF56829A5A}
+		{1CD2D200-F4F2-4ABE-8FBB-2545F64EAF4F} = {4D853F24-DA54-4D56-9D98-417DF5EBD133}
+		{64D72978-750C-4BB8-B065-22C547DBEED5} = {7CC91622-2416-4DBA-9D58-51EF56829A5A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6FA324A8-54A0-49C4-AD25-B28276FC8BF6}
