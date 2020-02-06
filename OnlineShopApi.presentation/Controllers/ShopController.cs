@@ -20,7 +20,7 @@ namespace OnlineShopApi.presentation.Controllers
         [HttpGet]
         [HttpGet("user")]
         [ProducesResponseType(typeof(UserVM), StatusCodes.Status200OK)]
-        public ActionResult<ProductVM> GetUser([FromBody] int? id)
+        public ActionResult<UserVM> GetUser([FromBody] int? id)
         {
             var customerId = (id.HasValue) ? id.Value : 1;
             var doc = _manager.GetUser(customerId);

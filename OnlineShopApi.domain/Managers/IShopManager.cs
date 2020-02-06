@@ -6,6 +6,6 @@ namespace OnlineShopApi.domain.Managers
     public interface IShopManager
     {
         UserVM GetUser(int id);
-        List<ProductVM> SortProducts();
+        List<ProductVM> GetProducts(string sortOption, int customerId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OnlineShopApi.data.Repositories;
 
 namespace OnlineShopApi.domain.Frameworks
 {

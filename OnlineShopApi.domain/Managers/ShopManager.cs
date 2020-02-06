@@ -20,8 +20,7 @@ namespace OnlineShopApi.domain.Managers
         public UserVM GetUser(int id)
         {
             var user = _service.GetUser(id);
-
-            return user;
+            return _mapper.Map<UserVM>(user);
         }
 
         public List<ProductVM> GetProducts(string sortOption, int customerId)
