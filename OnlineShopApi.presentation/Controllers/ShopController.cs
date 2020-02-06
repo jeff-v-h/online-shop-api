@@ -5,6 +5,7 @@ using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ViewModels;
 using OnlineShopApi.presentation.RequestModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OnlineShopApi.presentation.Controllers
 {
@@ -31,9 +32,9 @@ namespace OnlineShopApi.presentation.Controllers
 
         [HttpGet("sort")]
         [ProducesResponseType(typeof(List<ProductVM>), StatusCodes.Status200OK)]
-        public ActionResult<List<ProductVM>> GetSortedProducts([FromQuery] SortOption sortOption)
+        public async Task<IActionResult> GetSortedProducts([FromQuery] SortOption sortOption)
         {
-            var doc = _manager.GetProducts(sortOption);
+            var doc = await _manager.GetProductsAsync(sortOption);
             return Ok(doc);
         }
 

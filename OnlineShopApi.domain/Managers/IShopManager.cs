@@ -8,6 +8,6 @@ namespace OnlineShopApi.domain.Managers
     public interface IShopManager
     {
         UserVM GetUser(int? id);
-        Task<List<ProductVM>> GetProducts(SortOption sortOption);
+        Task<List<ProductVM>> GetProductsAsync(SortOption sortOption);
     }
 }

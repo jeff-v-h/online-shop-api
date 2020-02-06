@@ -27,17 +27,14 @@ namespace OnlineShopApi.domain.Managers
             return _mapper.Map<UserVM>(user);
         }
 
-        public async Task<List<ProductVM>> GetProducts(SortOption sortOption)
+        public async Task<List<ProductVM>> GetProductsAsync(SortOption sortOption)
         {
-            var products = _service.GetProducts();
-            var productsVM = _mapper.Map<List<ProductVM>>(products);
-
-            await SortProducts(productsVM, sortOption);
-
-            return productsVM;
+            var products = await _service.GetProductsAsync();
+            var sortedProducts = await SortProducts(products, sortOption);
+            return _mapper.Map<List<ProductVM>>(sortedProducts);
         }
 
-        private async Task<List<ProductVM>> SortProducts(List<ProductVM> products, SortOption sortOption)
+        private async Task<List<Product>> SortProducts(List<Product> products, SortOption sortOption)
         {
             switch (sortOption)
             {
@@ -55,7 +52,7 @@ namespace OnlineShopApi.domain.Managers
                     return products;
                 case SortOption.Recommended:
                     var recommended = await GetRecommendedProducts();
-                    return _mapper.Map<List<ProductVM>>(recommended);
+                    return recommended;
                 default:
                     throw new System.Exception("Not all sort options available");
             }
@@ -63,7 +60,7 @@ namespace OnlineShopApi.domain.Managers
 
         private async Task<List<Product>> GetRecommendedProducts()
         {
-            var history = await _service.GetShopperHistory();
+            var history = await _service.GetShopperHistoryAsync();
 
             var reducedShopperHistory = history.Aggregate((acc, next) =>
             {

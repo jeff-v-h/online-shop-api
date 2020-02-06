@@ -7,7 +7,7 @@ namespace OnlineShopApi.data.Repositories
     public interface IWooliesService
     {
         User GetUser(int id);
-        Task<List<ShopperHistory>> GetShopperHistory();
-        Task<List<Product>> GetProducts();
+        Task<List<ShopperHistory>> GetShopperHistoryAsync();
+        Task<List<Product>> GetProductsAsync();
     }
 }
