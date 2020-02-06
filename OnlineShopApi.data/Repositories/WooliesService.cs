@@ -32,7 +32,7 @@ namespace OnlineShopApi.data.Repositories
         {
             return new User
             {
-                Name = "Woolies Customer",
+                Name = "Jeffrey Huang",
                 Token = _token
             };
         }
