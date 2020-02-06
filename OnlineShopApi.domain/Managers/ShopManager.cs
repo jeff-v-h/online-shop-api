@@ -51,17 +51,21 @@ namespace OnlineShopApi.domain.Managers
                     products.Sort((x, y) => y.Name.CompareTo(x.Name));
                     return products;
                 case SortOption.Recommended:
-                    var recommended = await GetRecommendedProducts();
-                    return recommended;
+                    var shoppedProducts = await GetShoppedProducts();
+                    return GetRecommendedProducts(products, shoppedProducts);
                 default:
                     throw new System.Exception("Not all sort options available");
             }
         }
 
-        private async Task<List<Product>> GetRecommendedProducts()
+        private async Task<List<Product>> GetShoppedProducts()
         {
             var history = await _service.GetShopperHistoryAsync();
+            return TotalProductQuantities(history);
+        }
 
+        private List<Product> TotalProductQuantities(List<ShopperHistory> history)
+        {
             var reducedShopperHistory = history.Aggregate((acc, next) =>
             {
                 foreach (var product in next.Products)
@@ -78,6 +82,24 @@ namespace OnlineShopApi.domain.Managers
             });
 
             return reducedShopperHistory.Products;
+        }
+
+        // Add products which are not in ShopperHistory
+        private List<Product> GetRecommendedProducts(List<Product> products, List<Product> shoppedProducts)
+        {
+            foreach (var product in products)
+            {
+                if (shoppedProducts.Find(p => p.Name == product.Name) == null)
+                    shoppedProducts.Add(new Product
+                    {
+                        Name = product.Name,
+                        Quantity = 0,
+                        Price = product.Price
+                    });
+            }
+
+            shoppedProducts.Sort((x, y) => y.Quantity.CompareTo(x.Quantity));
+            return shoppedProducts;
         }
 
         public async Task<double> CalculateTrolleyTotal(TrolleyVM trolleyVM)
