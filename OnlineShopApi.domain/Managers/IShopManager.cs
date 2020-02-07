@@ -1,4 +1,4 @@
-﻿using OnlineShopApi.common;
+﻿using OnlineShopApi.domain.Models.AppModels;
 using OnlineShopApi.domain.Models.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineShopApi.common;
+using OnlineShopApi.domain.Models.AppModels;
 using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ViewModels;
-using OnlineShopApi.presentation.RequestModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,7 +23,7 @@ namespace OnlineShopApi.presentation.Controllers
         [HttpGet]
         [HttpGet("user")]
         [ProducesResponseType(typeof(UserVM), StatusCodes.Status200OK)]
-        public ActionResult<UserVM> GetUser()
+        public IActionResult GetUser()
         {
             var doc = _manager.GetUser(null);
             return Ok(doc);

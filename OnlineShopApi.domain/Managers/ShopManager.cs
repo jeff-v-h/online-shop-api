@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OnlineShopApi.common;
+using OnlineShopApi.domain.Models.AppModels;
 using OnlineShopApi.data.Models;
 using OnlineShopApi.data.Repositories;
 using OnlineShopApi.domain.Models.ViewModels;
@@ -61,11 +61,14 @@ namespace OnlineShopApi.domain.Managers
         private async Task<List<Product>> GetShoppedProducts()
         {
             var history = await _service.GetShopperHistoryAsync();
+            if (history == null) return new List<Product>();
             return TotalProductQuantities(history);
         }
 
         private List<Product> TotalProductQuantities(List<ShopperHistory> history)
         {
+            if (history.Count < 1) return new List<Product>();
+
             var reducedShopperHistory = history.Aggregate((acc, next) =>
             {
                 foreach (var product in next.Products)
