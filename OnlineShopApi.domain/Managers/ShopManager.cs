@@ -113,6 +113,12 @@ namespace OnlineShopApi.domain.Managers
         }
         #endregion
 
+        public async Task<decimal> CalculateTrolleyTotalAsync(TrolleyVM trolleyVM)
+        {
+            var trolley = _mapper.Map<Trolley>(trolleyVM);
+            return await _service.CalculateTrolleyTotal(trolley);
+        }
+
         public decimal CalculateTrolleyTotal(TrolleyVM trolleyVM)
         {
             return GetTrolleyTotal(trolleyVM);
@@ -141,16 +147,16 @@ namespace OnlineShopApi.domain.Managers
         }
 
         // Recursive method for applying specials to a trolley
-        private void ConsiderSpecials(SpecialVM special, List<ProductQuantityVM> items, TrolleyCheckout t)
+        private void ConsiderSpecials(SpecialVM special, List<ProductQuantityVM> items, TrolleyCheckout checkout)
         {
             // If special is available for item, see if quantities match before obtaining special price
             if (DoesSpecialApplyToTrolley(special, items))
             {
-                t.Total += special.Total;
+                checkout.Total += special.Total;
                 ApplySpecial(special, items);
 
                 // Call itself to see if the special applies again
-                ConsiderSpecials(special, items, t);
+                ConsiderSpecials(special, items, checkout);
             }
 
             return;

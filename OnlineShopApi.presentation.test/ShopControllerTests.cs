@@ -83,7 +83,7 @@ namespace OnlineShopApi.presentation.test
         [Fact]
         public async void CalculateTrolley_ReturnsOk_WithDecimal()
         {
-            _mockManager.Setup(x => x.CalculateTrolleyTotal(It.IsAny<TrolleyVM>()))
+            _mockManager.Setup(x => x.CalculateTrolleyTotalAsync(It.IsAny<TrolleyVM>()))
                 .ReturnsAsync((decimal)40.5);
 
             IActionResult result = await _controller.CalculateTrolley(GetTrolley());
@@ -102,7 +102,7 @@ namespace OnlineShopApi.presentation.test
                     new ProductBaseVM
                     {
                         Name = name,
-                        Price = 10.5
+                        Price = 10.5M
                     }
                 },
                 Specials = new List<SpecialVM>

@@ -131,12 +131,12 @@ namespace OnlineShopApi.domain.test
         }
 
         [Fact]
-        public void CalculateTrolley_ReturnsDecimal_WhenTrolleyProvided()
+        public async void CalculateTrolleyAsync_ReturnsDecimal_WhenTrolleyProvided()
         {
             _mockService.Setup(x => x.CalculateTrolleyTotal(It.IsAny<Trolley>()))
                 .ReturnsAsync((decimal)40.5);
 
-            var result = _manager.CalculateTrolleyTotal(GetTrolley());
+            var result = await _manager.CalculateTrolleyTotalAsync(GetTrolley());
 
             Assert.IsType<decimal>(result);
         }
