@@ -130,29 +130,5 @@ namespace OnlineShopApi.presentation.test
                 }
             };
         }
-        
-        private TrolleyVM GetTrolley2()
-        {
-            var trolley = GetTrolley();
-            var name = "item 2";
-            trolley.Products.Add(new ProductBaseVM
-            {
-                Name = name,
-                Price = 7
-            });
-            trolley.Specials[0].Quantities.Add(new ProductQuantityVM
-            {
-                Name = name,
-                Quantity = 4
-            });
-            trolley.Quantities.Add(new ProductQuantityVM
-            {
-                Name = name,
-                Quantity = 4
-            });
-
-
-            return trolley;
-        }
     }
 }

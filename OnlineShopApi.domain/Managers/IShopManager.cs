@@ -9,6 +9,6 @@ namespace OnlineShopApi.domain.Managers
     {
         UserVM GetUser(int? id);
         Task<List<ProductVM>> GetProductsAsync(SortOption sortOption);
-        Task<decimal> CalculateTrolleyTotal(TrolleyVM trolleyVM);
+        decimal CalculateTrolleyTotal(TrolleyVM trolleyVM);
     }
 }

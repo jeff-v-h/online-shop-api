@@ -131,19 +131,37 @@ namespace OnlineShopApi.domain.test
         }
 
         [Fact]
-        public async void CalculateTrolley_ReturnsDecimal_WhenTrolleyProvided()
+        public void CalculateTrolley_ReturnsDecimal_WhenTrolleyProvided()
         {
             _mockService.Setup(x => x.CalculateTrolleyTotal(It.IsAny<Trolley>()))
                 .ReturnsAsync((decimal)40.5);
 
-            var result = await _manager.CalculateTrolleyTotal(GetTrolley());
+            var result = _manager.CalculateTrolleyTotal(GetTrolley());
 
             Assert.IsType<decimal>(result);
         }
 
+        [Fact]
+        public void CalculateTrolley_GetsCorrectValue_WithSingleItemSpecial()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolley());
+
+            Assert.Equal(20.9000067M, result);
+        }
+
+        [Fact]
+        public void CalculateTrolley_GetsCorrectValue_WithMultipleItemSpecials()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolley2());
+
+            Assert.Equal(82.6000067M, result);
+        }
+
         private TrolleyVM GetTrolley()
         {
-            var name = "item 1";
+            var name = "juice";
+            var name2 = "shampoo";
+
             return new TrolleyVM
             {
                 Products = new List<ProductBaseVM>
@@ -151,7 +169,12 @@ namespace OnlineShopApi.domain.test
                     new ProductBaseVM
                     {
                         Name = name,
-                        Price = 10.5
+                        Price = 3.5M
+                    },
+                    new ProductBaseVM
+                    {
+                        Name = name2,
+                        Price = 5.0000067M
                     }
                 },
                 Specials = new List<SpecialVM>
@@ -163,10 +186,10 @@ namespace OnlineShopApi.domain.test
                             new ProductQuantityVM
                             {
                                 Name = name,
-                                Quantity = 3
+                                Quantity = 2
                             }
                         },
-                        Total = 30
+                        Total = 6.2M
                     }
                 },
                 Quantities = new List<ProductQuantityVM>
@@ -174,10 +197,65 @@ namespace OnlineShopApi.domain.test
                     new ProductQuantityVM
                     {
                         Name = name,
-                        Quantity = 4
+                        Quantity = 5
+                    },
+                    new ProductQuantityVM
+                    {
+                        Name = name2,
+                        Quantity = 1
                     }
                 }
             };
+        }
+
+        private TrolleyVM GetTrolley2()
+        {
+            var trolley = GetTrolley();
+            var name = "meat";
+            var nameProduct2 = "wine";
+
+            trolley.Products.Add(new ProductBaseVM
+            {
+                Name = name,
+                Price = 5
+            });
+            trolley.Products.Add(new ProductBaseVM
+            {
+                Name = nameProduct2,
+                Price = 11.7M
+            });
+
+            trolley.Specials.Add(new SpecialVM
+            {
+                Quantities = new List<ProductQuantityVM>
+                {
+                    new ProductQuantityVM
+                    {
+                        Name = name,
+                        Quantity = 3
+                    },
+                    new ProductQuantityVM
+                    {
+                        Name = nameProduct2,
+                        Quantity = 1
+                    }
+                },
+                Total = 25
+            });
+
+            trolley.Quantities.Add(new ProductQuantityVM
+            {
+                Name = name,
+                Quantity = 6
+            });
+            trolley.Quantities.Add(new ProductQuantityVM
+            {
+                Name = nameProduct2,
+                Quantity = 3
+            });
+
+
+            return trolley;
         }
     }
 }

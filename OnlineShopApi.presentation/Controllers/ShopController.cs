@@ -48,9 +48,9 @@ namespace OnlineShopApi.presentation.Controllers
 
         [HttpPost("trolleyTotal")]
         [ProducesResponseType(typeof(TrolleyVM), StatusCodes.Status201Created)]
-        public async Task<IActionResult> CalculateTrolley(TrolleyVM trolley)
+        public IActionResult CalculateTrolley(TrolleyVM trolley)
         {
-            var total = await _manager.CalculateTrolleyTotal(trolley);
+            var total = _manager.CalculateTrolleyTotal(trolley);
             return Ok(total);
         }
     }

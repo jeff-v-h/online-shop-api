@@ -6,6 +6,7 @@ using OnlineShopApi.domain.Models.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace OnlineShopApi.domain.Managers
 {
@@ -112,10 +113,68 @@ namespace OnlineShopApi.domain.Managers
         }
         #endregion
 
-        public async Task<decimal> CalculateTrolleyTotal(TrolleyVM trolleyVM)
+        public decimal CalculateTrolleyTotal(TrolleyVM trolleyVM)
         {
-            var trolley = _mapper.Map<Trolley>(trolleyVM);
-            return await _service.CalculateTrolleyTotal(trolley);
+            return GetTrolleyTotal(trolleyVM);
+        }
+
+        private decimal GetTrolleyTotal(TrolleyVM trolley)
+        {
+            var trolleyCheckout = new TrolleyCheckout { Total = 0 };
+
+            foreach (ProductQuantityVM item in trolley.Quantities)
+            {
+                var special = trolley.Specials.Find(s => s.Quantities.Find(q => q.Name == item.Name) != null);
+
+                // Recursive function since specials can apply more than once
+                if (special != null) ConsiderSpecials(special, trolley.Quantities, trolleyCheckout);
+
+                // Calculate the price after any specials have been considered & quantities deducted
+                var product = trolley.Products.Find(p => p.Name == item.Name);
+                if (product == null) throw new Exception("Item in trolley is not listed as a product");
+
+                trolleyCheckout.Total += item.Quantity * product.Price;
+                item.Quantity = 0;
+            }
+
+            return trolleyCheckout.Total;
+        }
+
+        // Recursive method for applying specials to a trolley
+        private void ConsiderSpecials(SpecialVM special, List<ProductQuantityVM> items, TrolleyCheckout t)
+        {
+            // If special is available for item, see if quantities match before obtaining special price
+            if (DoesSpecialApplyToTrolley(special, items))
+            {
+                t.Total += special.Total;
+                ApplySpecial(special, items);
+
+                // Call itself to see if the special applies again
+                ConsiderSpecials(special, items, t);
+            }
+
+            return;
+        }
+
+        // A special may consist of multiple items
+        private bool DoesSpecialApplyToTrolley(SpecialVM special, List<ProductQuantityVM> items)
+        {
+            foreach (var itemInSpecial in special.Quantities)
+            {
+                var item = items.Find(i => i.Name == itemInSpecial.Name);
+                if (item == null || itemInSpecial.Quantity > item.Quantity) return false;
+            }
+
+            return true;
+        }
+
+        private void ApplySpecial(SpecialVM special, List<ProductQuantityVM> items)
+        {
+            foreach (var itemInSpecial in special.Quantities)
+            {
+                var item = items.Find(i => i.Name == itemInSpecial.Name);
+                item.Quantity -= itemInSpecial.Quantity;
+            }
         }
     }
 }
