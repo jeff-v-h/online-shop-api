@@ -27,10 +27,15 @@ namespace OnlineShopApi.domain.Managers
             return _mapper.Map<UserVM>(user);
         }
 
+        #region Product sorting
         public async Task<List<ProductVM>> GetProductsAsync(SortOption sortOption)
         {
             var products = await _service.GetProductsAsync();
+            if (products == null) return null;
+
             var sortedProducts = await SortProducts(products, sortOption);
+            if (sortedProducts == null) return null;
+
             return _mapper.Map<List<ProductVM>>(sortedProducts);
         }
 
@@ -52,6 +57,7 @@ namespace OnlineShopApi.domain.Managers
                     return products;
                 case SortOption.Recommended:
                     var shoppedProducts = await GetShoppedProducts();
+                    if (shoppedProducts == null) return null;
                     return GetRecommendedProducts(products, shoppedProducts);
                 default:
                     throw new System.Exception("Not all sort options available");
@@ -61,7 +67,7 @@ namespace OnlineShopApi.domain.Managers
         private async Task<List<Product>> GetShoppedProducts()
         {
             var history = await _service.GetShopperHistoryAsync();
-            if (history == null) return new List<Product>();
+            if (history == null) return null;
             return TotalProductQuantities(history);
         }
 
@@ -104,6 +110,7 @@ namespace OnlineShopApi.domain.Managers
             shoppedProducts.Sort((x, y) => y.Quantity.CompareTo(x.Quantity));
             return shoppedProducts;
         }
+        #endregion
 
         public async Task<decimal> CalculateTrolleyTotal(TrolleyVM trolleyVM)
         {

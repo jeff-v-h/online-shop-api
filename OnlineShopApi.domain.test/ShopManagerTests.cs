@@ -37,6 +37,17 @@ namespace OnlineShopApi.domain.test
             Assert.IsType<UserVM>(result);
         }
 
+        [Fact]
+        public void GetUser_ReturnsNull_WhenNullReturnedFromService()
+        {
+            User user = null;
+            _mockService.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
+
+            var result = _manager.GetUser(111);
+
+            Assert.Null(result);
+        }
+
         [Theory]
         [InlineData("Low")]
         [InlineData("High")]
@@ -55,6 +66,68 @@ namespace OnlineShopApi.domain.test
 
             Assert.NotNull(result);
             Assert.IsType<List<ProductVM>>(result);
+        }
+
+        [Theory]
+        [InlineData("Low")]
+        [InlineData("High")]
+        [InlineData("Ascending")]
+        [InlineData("Descending")]
+        public async void GetProductsAsync_DoesNotCallShopperHistory_WhenNotRecommendedOption(string sortOption)
+        {
+            var option = (SortOption)Enum.Parse(typeof(SortOption), sortOption);
+            var products = new List<Product>();
+            var shopHistory = new List<ShopperHistory>();
+            _mockService.Setup(x => x.GetProductsAsync()).ReturnsAsync(products);
+            _mockService.Setup(x => x.GetShopperHistoryAsync()).ReturnsAsync(shopHistory);
+
+            var result = await _manager.GetProductsAsync(option);
+
+            _mockService.Verify(x => x.GetShopperHistoryAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async void GetProductsAsync_CallsShopperHistory_WhenRecommendedOption()
+        {
+            var option = (SortOption)Enum.Parse(typeof(SortOption), "Recommended");
+            var products = new List<Product>();
+            var shopHistory = new List<ShopperHistory>();
+            _mockService.Setup(x => x.GetProductsAsync()).ReturnsAsync(products);
+            _mockService.Setup(x => x.GetShopperHistoryAsync()).ReturnsAsync(shopHistory);
+
+            var result = await _manager.GetProductsAsync(option);
+
+            _mockService.Verify(x => x.GetShopperHistoryAsync(), Times.Once);
+        }
+
+        [Theory]
+        [InlineData("Low")]
+        [InlineData("Recommended")]
+        public async void GetProductsAsync_ReturnsNull_WhenNullProductsReturned(string sortOption)
+        {
+            var option = (SortOption)Enum.Parse(typeof(SortOption), sortOption);
+            List<Product> products = null;
+            var shopHistory = new List<ShopperHistory>();
+            _mockService.Setup(x => x.GetProductsAsync()).ReturnsAsync(products);
+            _mockService.Setup(x => x.GetShopperHistoryAsync()).ReturnsAsync(shopHistory);
+
+            var result = await _manager.GetProductsAsync(option);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async void GetProductsAsync_ReturnsNull_WhenNullHistoryReturned()
+        {
+            var option = (SortOption)Enum.Parse(typeof(SortOption), "Recommended");
+            var products = new List<Product>();
+            List<ShopperHistory> shopHistory = null;
+            _mockService.Setup(x => x.GetProductsAsync()).ReturnsAsync(products);
+            _mockService.Setup(x => x.GetShopperHistoryAsync()).ReturnsAsync(shopHistory);
+
+            var result = await _manager.GetProductsAsync(option);
+
+            Assert.Null(result);
         }
 
         [Fact]
