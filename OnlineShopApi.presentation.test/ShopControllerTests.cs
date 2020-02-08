@@ -35,6 +35,17 @@ namespace OnlineShopApi.presentation.test
             Assert.IsType<UserVM>(objectResult.Value);
         }
 
+        [Fact]
+        public void GetUser_ReturnsNotFound_WhenNullResponse()
+        {
+            UserVM user = null;
+            _mockManager.Setup(x => x.GetUser(null)).Returns(user);
+
+            IActionResult result = _controller.GetUser();
+
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
+        }
+
         [Theory]
         [InlineData("Low")]
         [InlineData("High")]
@@ -52,6 +63,21 @@ namespace OnlineShopApi.presentation.test
 
             var objectResult = Assert.IsType<OkObjectResult>(result);
             Assert.IsType<List<ProductVM>>(objectResult.Value);
+        }
+
+        [Theory]
+        [InlineData("Low")]
+        [InlineData("Recommended")]
+        public async void GetSortedProducts_ReturnsNotFound_WhenNullResponse(string sortOption)
+        {
+            var option = (SortOption)Enum.Parse(typeof(SortOption), sortOption);
+            List<ProductVM> products = null;
+            _mockManager.Setup(x => x.GetProductsAsync(It.IsAny<SortOption>()))
+                .ReturnsAsync(products);
+
+            IActionResult result = await _controller.GetSortedProducts(option);
+
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact]

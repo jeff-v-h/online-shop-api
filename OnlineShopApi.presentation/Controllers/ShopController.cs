@@ -5,6 +5,7 @@ using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OnlineShopApi.presentation.RequestModels;
 
 namespace OnlineShopApi.presentation.Controllers
 {
@@ -26,6 +27,7 @@ namespace OnlineShopApi.presentation.Controllers
         public IActionResult GetUser()
         {
             var doc = _manager.GetUser(null);
+            if (doc == null) return NotFound(new ErrorResponse(404, $"User was not found."));
             return Ok(doc);
         }
 
@@ -33,8 +35,15 @@ namespace OnlineShopApi.presentation.Controllers
         [ProducesResponseType(typeof(List<ProductVM>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSortedProducts([FromQuery] SortOption sortOption)
         {
-            var doc = await _manager.GetProductsAsync(sortOption);
-            return Ok(doc);
+            var products = await _manager.GetProductsAsync(sortOption);
+            if (products == null)
+            {
+                var response = "Products";
+                if (sortOption == SortOption.Recommended) response += " or shopping history";
+                response += " could not be found";
+                return NotFound(new ErrorResponse(404, response));
+            }
+            return Ok(products);
         }
 
         [HttpPost("trolleyTotal")]
