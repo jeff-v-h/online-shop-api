@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineShopApi.domain.Models.AppModels;
 using OnlineShopApi.domain.Managers;
+using OnlineShopApi.domain.Models.AppModels;
 using OnlineShopApi.domain.Models.ViewModels;
+using OnlineShopApi.presentation.RequestModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OnlineShopApi.presentation.RequestModels;
 
 namespace OnlineShopApi.presentation.Controllers
 {

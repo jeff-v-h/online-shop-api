@@ -5,10 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using OnlineShopApi.domain.Frameworks;
 using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ModelMappers;
 using OnlineShopApi.presentation.Middlewares;
+using System.Text.Json.Serialization;
 
 namespace OnlineShopApi.presentation
 {
@@ -25,7 +27,10 @@ namespace OnlineShopApi.presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers()
+                .AddNewtonsoftJson()
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
