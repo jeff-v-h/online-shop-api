@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using OnlineShopApi.domain.Helpers;
 
 namespace OnlineShopApi.domain.Managers
 {
@@ -131,10 +132,9 @@ namespace OnlineShopApi.domain.Managers
             // Keep track of potential specials since there can be overlap of specials that include the same item
             var potentialSpecials = new List<SpecialVM>();
             // Deep clone of specials to search through below so no specials are repeated
-            List<SpecialVM> specialsToSearchThrough = new List<SpecialVM>(trolley.Specials.Count);
-            trolley.Specials.ForEach((special) => specialsToSearchThrough.Add(new SpecialVM(special)));
+            List<SpecialVM> specialsToSearchThrough = trolley.Specials.Clone().ToList();
 
-            // 1. Get All specials that apply to trolley. In reality there can be more specials than checkout,
+            // 1. Get all specials that apply to trolley. In reality there can be more specials than checkout,
             // so loop through checkout items to determine which ones apply.
             foreach (ProductQuantityVM item in trolley.Quantities)
             {
