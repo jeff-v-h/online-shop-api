@@ -130,10 +130,17 @@ namespace OnlineShopApi.domain.Managers
 
             foreach (ProductQuantityVM item in trolley.Quantities)
             {
-                var special = trolley.Specials.Find(s => s.Quantities.Find(q => q.Name == item.Name) != null);
+                var specials = trolley.Specials.FindAll(s => s.Quantities.Find(q => q.Name == item.Name) != null);
+                
+                if (specials.Count > 0)
+                {
+                    // Account for specials with varying quantities for the same item 
+                    // (eg. less for x2, even less for x3). Sort in descending order
+                    specials.Sort((x, y) => y.Quantities.Find(q => q.Name == item.Name).Quantity.CompareTo(x.Quantities.Find(q => q.Name == item.Name).Quantity));
 
-                // Recursive function since specials can apply more than once
-                if (special != null) ConsiderSpecials(special, trolley.Quantities, trolleyCheckout);
+                    // Recursive function since specials can apply more than once
+                    ConsiderSpecials(specials, trolley.Quantities, trolleyCheckout);
+                }
 
                 // Calculate the price after any specials have been considered & quantities deducted
                 var product = trolley.Products.Find(p => p.Name == item.Name);
@@ -147,16 +154,22 @@ namespace OnlineShopApi.domain.Managers
         }
 
         // Recursive method for applying specials to a trolley
-        private void ConsiderSpecials(SpecialVM special, List<ProductQuantityVM> items, TrolleyCheckout checkout)
+        // NOTE: This assumes an item will only have one type of special with only the quantity changing.
+        // Eg. if Item1 & Item2 deal exists with x2 or x3 special. Item1 will not exist in special with another product.
+        private void ConsiderSpecials(List<SpecialVM> specials, List<ProductQuantityVM> items, TrolleyCheckout checkout)
         {
-            // If special is available for item, see if quantities match before obtaining special price
-            if (DoesSpecialApplyToTrolley(special, items))
+            foreach (var special in specials)
             {
-                checkout.Total += special.Total;
-                ApplySpecial(special, items);
+                // If special is available for item, see if quantities match before obtaining special price
+                if (DoesSpecialApplyToTrolley(special, items))
+                {
+                    checkout.Total += special.Total;
+                    ApplySpecial(special, items);
 
-                // Call itself to see if the special applies again
-                ConsiderSpecials(special, items, checkout);
+                    // Call itself to see if the special applies again
+                    ConsiderSpecials(specials, items, checkout);
+                    break;
+                }
             }
 
             return;

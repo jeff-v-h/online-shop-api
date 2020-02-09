@@ -157,6 +157,14 @@ namespace OnlineShopApi.domain.test
             Assert.Equal(82.6000067M, result);
         }
 
+        [Fact]
+        public void CalculateTrolley_GetsValue_WhenItemHasFurtherReductionsIfMoreBought()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolley3());
+
+            Assert.Equal(82.4000067M, result);
+        }
+
         private TrolleyVM GetTrolley()
         {
             var name = "juice";
@@ -254,6 +262,27 @@ namespace OnlineShopApi.domain.test
                 Quantity = 3
             });
 
+
+            return trolley;
+        }
+
+        private TrolleyVM GetTrolley3()
+        {
+            var trolley = GetTrolley2();
+            var nameProduct1 = trolley.Products[0].Name;
+
+            trolley.Specials.Add(new SpecialVM
+            {
+                Quantities = new List<ProductQuantityVM>
+                {
+                    new ProductQuantityVM
+                    {
+                        Name = nameProduct1,
+                        Quantity = 3
+                    },
+                },
+                Total = 9.5M
+            });
 
             return trolley;
         }

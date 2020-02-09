@@ -81,12 +81,12 @@ namespace OnlineShopApi.presentation.test
         }
 
         [Fact]
-        public async void CalculateTrolley_ReturnsOk_WithDecimal()
+        public void CalculateTrolley_ReturnsOk_WithDecimal()
         {
             _mockManager.Setup(x => x.CalculateTrolleyTotalAsync(It.IsAny<TrolleyVM>()))
                 .ReturnsAsync((decimal)40.5);
 
-            IActionResult result = await _controller.CalculateTrolley(GetTrolley());
+            IActionResult result = _controller.CalculateTrolley(GetTrolley());
 
             var objectResult = Assert.IsType<OkObjectResult>(result);
             Assert.IsType<decimal>(objectResult.Value);
