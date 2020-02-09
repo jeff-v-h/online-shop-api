@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace OnlineShopApi.domain.Models.ViewModels
 {
-    public class SpecialVM
+    public class SpecialVM : ICloneable
     {
         public List<ProductQuantityVM> Quantities { get; set; }
         public decimal Total { get; set; }
@@ -11,11 +12,11 @@ namespace OnlineShopApi.domain.Models.ViewModels
 
         public SpecialVM(SpecialVM previousSpecial)
         {
-            Quantities = CloneQuantities(previousSpecial.Quantities);
+            Quantities = GetQuantities(previousSpecial.Quantities);
             Total = previousSpecial.Total;
         }
 
-        private List<ProductQuantityVM> CloneQuantities(List<ProductQuantityVM> quantities)
+        private List<ProductQuantityVM> GetQuantities(List<ProductQuantityVM> quantities)
         {
             var list = new List<ProductQuantityVM>();
             foreach (var quantity in quantities)
@@ -23,6 +24,11 @@ namespace OnlineShopApi.domain.Models.ViewModels
                 list.Add(new ProductQuantityVM(quantity));
             }
             return list;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }
