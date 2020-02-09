@@ -5,6 +5,6 @@ namespace OnlineShopApi.data.Models
     public class Special
     {
         public List<ProductQuantity> Quantities { get; set; }
-        public double Total { get; set; }
+        public decimal Total { get; set; }
     }
 }

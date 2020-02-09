@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineShopApi.common;
+using OnlineShopApi.domain.Models.AppModels;
 using OnlineShopApi.domain.Managers;
 using OnlineShopApi.domain.Models.ViewModels;
-using OnlineShopApi.presentation.RequestModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OnlineShopApi.presentation.RequestModels;
 
 namespace OnlineShopApi.presentation.Controllers
 {
@@ -24,9 +24,10 @@ namespace OnlineShopApi.presentation.Controllers
         [HttpGet]
         [HttpGet("user")]
         [ProducesResponseType(typeof(UserVM), StatusCodes.Status200OK)]
-        public ActionResult<UserVM> GetUser()
+        public IActionResult GetUser()
         {
             var doc = _manager.GetUser(null);
+            if (doc == null) return NotFound(new ErrorResponse(404, $"User was not found."));
             return Ok(doc);
         }
 
@@ -34,15 +35,23 @@ namespace OnlineShopApi.presentation.Controllers
         [ProducesResponseType(typeof(List<ProductVM>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSortedProducts([FromQuery] SortOption sortOption)
         {
-            var doc = await _manager.GetProductsAsync(sortOption);
-            return Ok(doc);
+            var products = await _manager.GetProductsAsync(sortOption);
+            if (products == null)
+            {
+                var response = "Products";
+                if (sortOption == SortOption.Recommended) response += " or shopping history";
+                response += " could not be found";
+                return NotFound(new ErrorResponse(404, response));
+            }
+            return Ok(products);
         }
 
         [HttpPost("trolleyTotal")]
         [ProducesResponseType(typeof(TrolleyVM), StatusCodes.Status201Created)]
-        public async Task<IActionResult> CalculateTrolley(TrolleyVM trolley)
+        public IActionResult CalculateTrolley(TrolleyVM trolley)
         {
-            var total = await _manager.CalculateTrolleyTotal(trolley);
+            //var total = await _manager.CalculateTrolleyTotal(trolley);
+            var total = _manager.CalculateTrolleyTotal(trolley);
             return Ok(total);
         }
     }
