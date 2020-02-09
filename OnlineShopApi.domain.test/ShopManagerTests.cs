@@ -17,6 +17,11 @@ namespace OnlineShopApi.domain.test
         private readonly Mock<IWooliesService> _mockService;
         private ShopManager _manager;
 
+        private const string Juice = "juice";
+        private const string Shampoo = "shampoo";
+        private const string Meat = "meat";
+        private const string Wine = "wine";
+
         public ShopManagerTests()
         {
             _mockService = new Mock<IWooliesService>();
@@ -130,28 +135,67 @@ namespace OnlineShopApi.domain.test
             Assert.Null(result);
         }
 
+        #region Tests for Calculation of Trolley
         [Fact]
-        public async void CalculateTrolley_ReturnsDecimal_WhenTrolleyProvided()
+        public async void CalculateTrolleyAsync_ReturnsDecimal_WhenTrolleyProvided()
         {
             _mockService.Setup(x => x.CalculateTrolleyTotal(It.IsAny<Trolley>()))
                 .ReturnsAsync((decimal)40.5);
 
-            var result = await _manager.CalculateTrolleyTotal(GetTrolley());
+            var result = await _manager.CalculateTrolleyTotalAsync(GetTrolley());
 
             Assert.IsType<decimal>(result);
         }
 
+        [Fact]
+        public void CalculateTrolley_GetsCorrectValue_WithSingleItemSpecial()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolley());
+
+            Assert.Equal(20.9000067M, result);
+        }
+
+        [Fact]
+        public void CalculateTrolley_GetsCorrectValue_WithMultipleItemSpecials()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolleyWithMultipleItemSpecial());
+
+            Assert.Equal(67.6000067M, result);
+        }
+
+        [Fact]
+        public void CalculateTrolley_GetsValue_WhenItemHasFurtherReductionsIfMoreBought()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolleySameItemSpecialDiffQuantity());
+
+            Assert.Equal(67.4000067M, result);
+        }
+
+        [Fact]
+        public void CalculateTrolley_GetsValue_WhenItemAcrossSpecials()
+        {
+            var result = _manager.CalculateTrolleyTotal(GetTrolleyWithItemAcrossSpecials());
+
+            Assert.Equal(66.7000067M, result);
+        }
+        #endregion
+
+        #region Trolleys to test against
         private TrolleyVM GetTrolley()
         {
-            var name = "item 1";
             return new TrolleyVM
             {
                 Products = new List<ProductBaseVM>
                 {
                     new ProductBaseVM
                     {
-                        Name = name,
-                        Price = 10.5
+                        Name = Juice,
+                        Price = 3.5M
+                    },
+                    new ProductBaseVM
+                    {
+                        Name = Shampoo,
+                        Price = 5.0000067M
                     }
                 },
                 Specials = new List<SpecialVM>
@@ -162,22 +206,116 @@ namespace OnlineShopApi.domain.test
                         {
                             new ProductQuantityVM
                             {
-                                Name = name,
-                                Quantity = 3
+                                Name = Juice,
+                                Quantity = 2
                             }
                         },
-                        Total = 30
+                        Total = 6.2M
                     }
                 },
                 Quantities = new List<ProductQuantityVM>
                 {
                     new ProductQuantityVM
                     {
-                        Name = name,
-                        Quantity = 4
+                        Name = Juice,
+                        Quantity = 5
+                    },
+                    new ProductQuantityVM
+                    {
+                        Name = Shampoo,
+                        Quantity = 1
                     }
                 }
             };
         }
+
+        private TrolleyVM GetTrolleyWithMultipleItemSpecial()
+        {
+            var trolley = GetTrolley();
+
+            trolley.Products.Add(new ProductBaseVM
+            {
+                Name = Meat,
+                Price = 10
+            });
+            trolley.Products.Add(new ProductBaseVM
+            {
+                Name = Wine,
+                Price = 11.7M
+            });
+
+            trolley.Specials.Add(new SpecialVM
+            {
+                Quantities = new List<ProductQuantityVM>
+                {
+                    new ProductQuantityVM
+                    {
+                        Name = Meat,
+                        Quantity = 3
+                    },
+                    new ProductQuantityVM
+                    {
+                        Name = Wine,
+                        Quantity = 1
+                    }
+                },
+                Total = 35
+            });
+
+            trolley.Quantities.Add(new ProductQuantityVM
+            {
+                Name = Meat,
+                Quantity = 3
+            });
+            trolley.Quantities.Add(new ProductQuantityVM
+            {
+                Name = Wine,
+                Quantity = 2
+            });
+
+
+            return trolley;
+        }
+
+        private TrolleyVM GetTrolleySameItemSpecialDiffQuantity()
+        {
+            var trolley = GetTrolleyWithMultipleItemSpecial();
+
+            trolley.Specials.Add(new SpecialVM
+            {
+                Quantities = new List<ProductQuantityVM>
+                {
+                    new ProductQuantityVM
+                    {
+                        Name = Juice,
+                        Quantity = 3
+                    },
+                },
+                Total = 9.5M
+            });
+
+            return trolley;
+        }
+
+        private TrolleyVM GetTrolleyWithItemAcrossSpecials()
+        {
+            var trolley = GetTrolleySameItemSpecialDiffQuantity();
+
+            trolley.Specials.Add(new SpecialVM
+            {
+                Quantities = new List<ProductQuantityVM>
+                {
+                    new ProductQuantityVM
+                    {
+                        Name = Wine,
+                        Quantity = 2
+                    },
+                },
+                Total = 16
+            });
+
+            return trolley;
+        }
+        #endregion
     }
 }

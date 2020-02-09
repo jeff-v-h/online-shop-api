@@ -6,6 +6,7 @@ using OnlineShopApi.domain.Models.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace OnlineShopApi.domain.Managers
 {
@@ -112,10 +113,137 @@ namespace OnlineShopApi.domain.Managers
         }
         #endregion
 
-        public async Task<decimal> CalculateTrolleyTotal(TrolleyVM trolleyVM)
+        public async Task<decimal> CalculateTrolleyTotalAsync(TrolleyVM trolleyVM)
         {
             var trolley = _mapper.Map<Trolley>(trolleyVM);
             return await _service.CalculateTrolleyTotal(trolley);
+        }
+
+        public decimal CalculateTrolleyTotal(TrolleyVM trolleyVM)
+        {
+            var trolleyCheckout = new TrolleyCheckout();
+            return GetTrolleyTotal(trolleyVM, trolleyCheckout);
+        }
+
+        // Get total for current trolley - Recursive function
+        private decimal GetTrolleyTotal(TrolleyVM trolley, TrolleyCheckout trolleyCheckout)
+        {
+            // Keep track of potential specials since there can be overlap of specials that include the same item
+            var potentialSpecials = new List<SpecialVM>();
+            // Deep clone of specials to search through below so no specials are repeated
+            List<SpecialVM> specialsToSearchThrough = new List<SpecialVM>(trolley.Specials.Count);
+            trolley.Specials.ForEach((special) => specialsToSearchThrough.Add(new SpecialVM(special)));
+
+            // 1. Get All specials that apply to trolley. In reality there can be more specials than checkout,
+            // so loop through checkout items to determine which ones apply.
+            foreach (ProductQuantityVM item in trolley.Quantities)
+            {
+                // Check if item applies and if it does also remove it from the specials to look through.
+                // Loop through backwards since removing list being iterated
+                for (int i = specialsToSearchThrough.Count - 1; i >= 0; i--)
+                {
+                    var special = specialsToSearchThrough[i];
+                    // Only add special to list of potentials 
+                    if (DoesSpecialIncludeItem(special, item.Name) && DoesSpecialApplyToTrolley(special, trolley.Quantities))
+                    {
+                        potentialSpecials.Add(special);
+                        specialsToSearchThrough.RemoveAt(i);
+                    }
+                }
+            }
+
+            // 2. Calculate end cost of each potential special. Use the cheapest result
+            if (potentialSpecials.Count > 0)
+            {
+                int indexCheapest = 0;
+                decimal cheapest = 0;
+                
+                for (int i = 0; i < potentialSpecials.Count; i++)
+                {
+                    var special = potentialSpecials[i];
+                    var checkoutForSpecial = new TrolleyCheckout(trolleyCheckout.Total);
+                    var trolleyForSpecial = new TrolleyVM(trolley);
+
+                    checkoutForSpecial.Total += special.Total;
+                    ApplySpecial(special, trolleyForSpecial.Quantities);
+
+                    // Recursive call to continue calculating with reduced items
+                    var totalForSpecial = GetTrolleyTotal(trolleyForSpecial, checkoutForSpecial);
+
+                    if (i == 0)
+                    {
+                        cheapest = totalForSpecial;
+                    }
+                    else if (totalForSpecial < cheapest)
+                    {
+                        indexCheapest = i;
+                        cheapest = totalForSpecial;
+                    }
+                }
+
+                // Apply the special that has cheapest end value
+                return cheapest;
+            }
+
+            // finally calculate the remaining trolley items
+            foreach (ProductQuantityVM item in trolley.Quantities)
+            {
+                var product = trolley.Products.Find(p => p.Name == item.Name);
+                if (product == null) throw new Exception("Item in trolley is not listed as a product");
+
+                trolleyCheckout.Total += item.Quantity * product.Price;
+                item.Quantity = 0;
+            }
+
+            return trolleyCheckout.Total;
+        }
+
+        // Recursive method for applying specials to a trolley
+        // NOTE: This assumes an item will only have one type of special with only the quantity changing.
+        // Eg. if Item1 & Item2 deal exists with x2 or x3 special. Item1 will not exist in special with another product.
+        private void ConsiderSpecials(List<SpecialVM> specials, List<ProductQuantityVM> items, TrolleyCheckout checkout)
+        {
+            foreach (var special in specials)
+            {
+                // If special is available for item, see if quantities match before obtaining special price
+                if (DoesSpecialApplyToTrolley(special, items))
+                {
+                    checkout.Total += special.Total;
+                    ApplySpecial(special, items);
+
+                    // Call itself to see if the special applies again
+                    ConsiderSpecials(specials, items, checkout);
+                    break;
+                }
+            }
+
+            return;
+        }
+
+        private bool DoesSpecialIncludeItem(SpecialVM special, string itemName)
+        {
+            return special.Quantities.Find(q => q.Name == itemName) != null;
+        }
+
+        // A special may consist of multiple items
+        private bool DoesSpecialApplyToTrolley(SpecialVM special, List<ProductQuantityVM> items)
+        {
+            foreach (var itemInSpecial in special.Quantities)
+            {
+                var item = items.Find(i => i.Name == itemInSpecial.Name);
+                if (item == null || itemInSpecial.Quantity > item.Quantity) return false;
+            }
+
+            return true;
+        }
+
+        private void ApplySpecial(SpecialVM special, List<ProductQuantityVM> items)
+        {
+            foreach (var itemInSpecial in special.Quantities)
+            {
+                var item = items.Find(i => i.Name == itemInSpecial.Name);
+                item.Quantity -= itemInSpecial.Quantity;
+            }
         }
     }
 }
